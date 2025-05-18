@@ -1,3 +1,49 @@
-/db
-/node_modules
-package-lock.json
+# --- Dossiers et fichiers communs ---
+/db/
+/node_modules/
+/package-lock.json
+/bun.lockb
+
+# --- Go ---
+/bin/
+/build/
+/dist/
+/*.exe
+*.out
+*.test
+*.log
+*.mod
+*.sum
+/vendor/
+/coverage*
+
+# --- PlatformIO / Python ---
+/.pio/
+/.pioenvs/
+/.piolibdeps/
+platformio.ini.save
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.mypy_cache/
+
+# --- Docker / Runtime ---
+*.sock
+*.pid
+*.orig
+*.rej
+
+# --- IDEs ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# --- OS Junk ---
+.DS_Store
+Thumbs.db
+*.swp
+*.bak

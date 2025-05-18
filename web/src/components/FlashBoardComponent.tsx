@@ -345,15 +345,15 @@ export const FlashBoardComponent = (props: { onNext: () => void }) => {
                     <SchemaField><SchemaField.Number
                         name={"limitVoltage150MA"}
                         title={"Limit Voltage 150mA"}
-                        default={28.0}
+                        default={29.05}
                         x-decorator-props={{tooltip: "Voltage limit during slow charge in Volts"}}
-                        x-component-props={{step: 0.1, max: 29.4}}
+                        x-component-props={{step: 0.05, max: 29.4}}
                         x-component="NumberPicker"
                         x-decorator="FormItem"/></SchemaField>
                     <SchemaField><SchemaField.Number
                         name={"maxChargeVoltage"}
                         title={"Max Charge Voltage"}
-                        default={29.0}
+                        default={29.2}
                         x-decorator-props={{tooltip: "Max charge voltage in Volts"}}
                         x-component-props={{step: 0.1, max: 29.4}}
                         x-component="NumberPicker"
@@ -361,9 +361,9 @@ export const FlashBoardComponent = (props: { onNext: () => void }) => {
                     <SchemaField><SchemaField.Number
                         name={"batChargeCutoffVoltage"}
                         title={"Bat Charge Cutoff Voltage"}
-                        default={28.0}
+                        default={29.15}
                         x-decorator-props={{tooltip: "Max battery voltage allowed in Volts"}}
-                        x-component-props={{step: 0.1, max: 29.0}}
+                        x-component-props={{step: 0.05, max: 29.3}}
                         x-component="NumberPicker"
                         x-decorator="FormItem"/></SchemaField>
                     <SchemaField><SchemaField.Number
