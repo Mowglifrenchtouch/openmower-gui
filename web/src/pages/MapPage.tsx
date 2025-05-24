@@ -816,6 +816,51 @@ export const MapPage = () => {
 
             }
         }
+        /*try {
+            await guiApi.openmower.deleteOpenmower()
+            notification.success({
+                message: "Area saved",
+            })
+            setEditMap(false)
+        } catch (e: any) {
+            notification.error({
+                message: "Failed to save area",
+                description: e.message,
+            })
+        }
+        for (const [type, areasOfType] of Object.entries(areas)) {
+            for (const [_, area] of Object.entries(areasOfType)) {
+                try {
+                    await guiApi.openmower.mapAreaAddCreate({
+                        area: area,
+                        isNavigationArea: type == "navigation",
+                    })
+                    notification.success({
+                        message: "Area saved",
+                    })
+                    setEditMap(false)
+                } catch (e: any) {
+                    notification.error({
+                        message: "Failed to save area",
+                        description: e.message,
+                    })
+                }
+            }
+        }*/
+
+        const updateMsg : MowerReplaceMapSrvReq = {
+            areas : []
+        };
+        for (const [type, areasOfType] of Object.entries(areas)) {
+            for (const [_, area] of Object.entries(areasOfType)) {
+                const narea = {
+                    area: area,
+                    isNavigationArea: type == "navigation",
+                };
+                updateMsg.areas.push(narea);
+
+            }
+        }
         try {
             await guiApi.openmower.mapReplace(updateMsg)
             notification.success({
