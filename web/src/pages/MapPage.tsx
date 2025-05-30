@@ -27,8 +27,6 @@ import AsyncDropDownButton from "../components/AsyncDropDownButton.tsx";
 import {MowingFeature, MowingAreaFeature, MowerFeatureBase, DockFeatureBase, MowingFeatureBase, LineFeatureBase, NavigationFeature, ObstacleFeature, ActivePathFeature, PathFeature } from "../types/map.ts";
 
 
-let offsetXTimeout: any = null;
-let offsetYTimeout: any = null;
 
 class mowingAreaEdit  {
     id?: string;
@@ -318,8 +316,9 @@ export const MapPage = () => {
             }
             return [{
                 key: feat.id as string,
-                label: feat.properties.title,
-                feat: feat
+                label: feat.properties?.title,
+                feat: feat,
+                index: feat.properties?.index
             }]
         }))
     }, [features]);
@@ -528,12 +527,8 @@ export const MapPage = () => {
             for (const f of e.features) {
 
 
-
-                const feature = newFeatures[f.id];
-                if ((!(feature instanceof MowingAreaFeature)) &&
-                (!(feature instanceof ObstacleFeature)) &&
-                (!(feature instanceof NavigationFeature)) 
-                )
+                const feature = newFeatures[f.id] as MowingAreaFeature;
+                if (!(feature instanceof MowingAreaFeature))
                     continue;
 
                 if ((f.geometry.type=='Polygon'))
@@ -816,51 +811,6 @@ export const MapPage = () => {
 
             }
         }
-        /*try {
-            await guiApi.openmower.deleteOpenmower()
-            notification.success({
-                message: "Area saved",
-            })
-            setEditMap(false)
-        } catch (e: any) {
-            notification.error({
-                message: "Failed to save area",
-                description: e.message,
-            })
-        }
-        for (const [type, areasOfType] of Object.entries(areas)) {
-            for (const [_, area] of Object.entries(areasOfType)) {
-                try {
-                    await guiApi.openmower.mapAreaAddCreate({
-                        area: area,
-                        isNavigationArea: type == "navigation",
-                    })
-                    notification.success({
-                        message: "Area saved",
-                    })
-                    setEditMap(false)
-                } catch (e: any) {
-                    notification.error({
-                        message: "Failed to save area",
-                        description: e.message,
-                    })
-                }
-            }
-        }*/
-
-        const updateMsg : MowerReplaceMapSrvReq = {
-            areas : []
-        };
-        for (const [type, areasOfType] of Object.entries(areas)) {
-            for (const [_, area] of Object.entries(areasOfType)) {
-                const narea = {
-                    area: area,
-                    isNavigationArea: type == "navigation",
-                };
-                updateMsg.areas.push(narea);
-
-            }
-        }
         try {
             await guiApi.openmower.mapReplace(updateMsg)
             notification.success({
@@ -976,7 +926,7 @@ export const MapPage = () => {
                 return;
             }
             const reader = new FileReader();
-            reader.onload = (event) => {
+            /*reader.onload = (event) => {
                 const geojson = JSON.parse(event.target?.result as string) as FeatureCollection;
                 const geojsonfeatures = geojson.features.reduce((acc, feature) => {
                     acc[feature.id as string] = feature;
@@ -1043,7 +993,7 @@ export const MapPage = () => {
                 });
 
                 setFeatures(newFeatures);
-            };
+            };*/
             reader.readAsText(file);
         });
         input.click();
@@ -1219,7 +1169,7 @@ export const MapPage = () => {
                         onAsyncClick: (e) => {
                             const item = mowingAreas.find(item => item.key == e.key)                            
                             return mowerAction("start_in_area", {
-                                area: item!!.feat?.properties?.index,
+                                area: item!!.index,
                             })()
                         }
                     }}>Mow area</AsyncDropDownButton>}

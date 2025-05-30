@@ -123,7 +123,6 @@ export class MowingFeatureBase extends MowingFeature implements Feature<Polygon>
     }
 
 
-    
     setColor(color: string) : MowingFeatureBase {
         this.properties.color = color;
         return this;
