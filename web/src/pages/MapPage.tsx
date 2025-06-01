@@ -27,6 +27,8 @@ import AsyncDropDownButton from "../components/AsyncDropDownButton.tsx";
 import {MowingFeature, MowingAreaFeature, MowerFeatureBase, DockFeatureBase, MowingFeatureBase, LineFeatureBase, NavigationFeature, ObstacleFeature, ActivePathFeature, PathFeature } from "../types/map.ts";
 
 
+let offsetXTimeout: any = null;
+let offsetYTimeout: any = null;
 
 class mowingAreaEdit  {
     id?: string;
@@ -316,9 +318,8 @@ export const MapPage = () => {
             }
             return [{
                 key: feat.id as string,
-                label: feat.properties?.title,
-                feat: feat,
-                index: feat.properties?.index
+                label: '',
+                feat: feat
             }]
         }))
     }, [features]);
@@ -926,7 +927,7 @@ export const MapPage = () => {
                 return;
             }
             const reader = new FileReader();
-            /*reader.onload = (event) => {
+            reader.onload = (event) => {
                 const geojson = JSON.parse(event.target?.result as string) as FeatureCollection;
                 const geojsonfeatures = geojson.features.reduce((acc, feature) => {
                     acc[feature.id as string] = feature;
@@ -993,7 +994,7 @@ export const MapPage = () => {
                 });
 
                 setFeatures(newFeatures);
-            };*/
+            };
             reader.readAsText(file);
         });
         input.click();
@@ -1169,7 +1170,7 @@ export const MapPage = () => {
                         onAsyncClick: (e) => {
                             const item = mowingAreas.find(item => item.key == e.key)                            
                             return mowerAction("start_in_area", {
-                                area: item!!.index,
+                                area: item!!.feat?.properties?.index,
                             })()
                         }
                     }}>Mow area</AsyncDropDownButton>}
