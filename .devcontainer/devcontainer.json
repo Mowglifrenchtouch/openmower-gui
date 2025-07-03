@@ -1,18 +1,22 @@
-// See https://containers.dev/implementors/json_reference/ for configuration reference
 {
-  "name": "Untitled Node.js project",
+  "name": "OpenMower GUI",
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "forwardPorts": [
-    5173,
-    1883,
-    4006
-  ],
+  "forwardPorts": [5173, 1883, 4006],
   "remoteUser": "node",
   "customizations": {
     "jetbrains": {
       "backend": "WebStorm"
+    },
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "yoavbls.pretty-ts-errors"
+      ]
     }
-  }
+  },
+  "postCreateCommand": "cd web && bun install"
 }
