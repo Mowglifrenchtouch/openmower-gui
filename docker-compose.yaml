@@ -6,22 +6,25 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
   gui:
     container_name: openmower-gui
+    image: ghcr.io/mowglifrenchtouch/openmower-gui:latest
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
     labels:
       "com.centurylinklabs.watchtower.enable": true
       project: openmower
       app: gui
-    image: ghcr.io/cedbossneo/openmower-gui:master
-    restart: unless-stopped
-    network_mode: host
-    privileged: true
     environment:
       ROS_MASTER_URI: http://localhost:11311
       MOWER_CONFIG_FILE: /config/mower_config.sh
       DOCKER_HOST: unix:///var/run/docker.sock
+      CCACHE_DIR: /ccache
     volumes:
-      - /dev:/dev
-      - ./db:/app/db
-      - ./config/om:/config
+      - /dev:/dev                       # nécessaire pour accès USB
+      - ./db:/app/db                   # base de données locale
+      - ./config/om:/config            # config OpenMower
       - /var/run/docker.sock:/var/run/docker.sock
+      - openmower-ccache:/ccache       # volume pour cache PlatformIO
