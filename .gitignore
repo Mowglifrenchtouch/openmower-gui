@@ -1,3 +1,58 @@
+# --- Backend Go ---
 /db
-/node_modules
+/openmower-gui
+*.log
+
+# --- Frontend Web ---
+/node_modules/
 package-lock.json
+bun.lockb
+.bun/
+web/node_modules/
+web/.next/
+web/dist/
+web/build/
+
+# --- PlatformIO ---
+.pio/
+.platformio/
+.vscode/
+*.elf
+*.bin
+*.hex
+
+# --- Docker ---
+.docker/
+.dockerignore
+.buildx-cache/
+*.tar
+*.img
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+
+# --- Logs, Dumps, OS ---
+*.log
+*.swp
+*.swo
+*.swn
+*.DS_Store
+Thumbs.db
+ehthumbs.db
+*.bak
+*.tmp
+*.old
+
+# --- IDEs ---
+.idea/
+.vscode/
+*.code-workspace
+
+# --- System / Misc ---
+*.orig
+*~
