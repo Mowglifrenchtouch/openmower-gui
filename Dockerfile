@@ -9,13 +9,12 @@ RUN go build -o openmower-gui -ldflags="-s -w" ./openmower-gui
 
 
 # ---------- Stage 2 : Web frontend ----------
-FROM --platform=$BUILDPLATFORM node:18-alpine AS build-web
+FROM --platform=$BUILDPLATFORM oven/bun:1.1-alpine AS build-web
 
 WORKDIR /web
 COPY ./web .
 
-RUN yarn install --frozen-lockfile && \
-    yarn build
+RUN bun install && bun run build
 
 
 # ---------- Stage 3 : PlatformIO + OpenOCD + ccache ----------
