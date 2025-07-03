@@ -22,6 +22,7 @@ FROM --platform=$BUILDPLATFORM ubuntu:22.04 AS deps
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Installation des paquets nécessaires
 RUN apt-get update && apt-get install -y \
     ca-certificates curl python3 python3-pip python3-venv git \
     build-essential unzip wget autoconf automake pkg-config \
@@ -31,9 +32,10 @@ RUN apt-get update && apt-get install -y \
 # RPi GPIO (non-bloquant)
 RUN apt-get update && apt-get install -y rpi.gpio-common || true
 
-# --- OpenOCD (avec ccache) ---
-ENV CC="ccache gcc"
-RUN git clone --depth=1 --recursive https://github.com/raspberrypi/openocd.git && \
+# --- OpenOCD (avec cache partagé via BuildKit ccache) ---
+RUN --mount=type=cache,target=/ccache \
+    export CCACHE_DIR=/ccache && export CC="ccache gcc" && \
+    git clone --depth=1 --recursive https://github.com/raspberrypi/openocd.git && \
     cd openocd && ./bootstrap && ./configure \
         --enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio && \
     make -j$(nproc) && make install && \
@@ -61,7 +63,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates python3 python3-pip libusb-1.0-0 ccache \
     && rm -rf /var/lib/apt/lists/*
 
-# Copie des binaires
+# Copie des binaires et frontend
 COPY --from=deps /usr/local /usr/local
 COPY --from=build-web /web/dist ./web
 COPY --from=build-go /app/openmower-gui ./openmower-gui
