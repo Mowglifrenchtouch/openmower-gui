@@ -10,21 +10,29 @@ jobs:
   clear-cache:
     runs-on: ubuntu-latest
     steps:
-      - name: Clear cache
+      - name: Clear GitHub Actions cache
         uses: actions/github-script@v6
         with:
           script: |
-            console.log("About to clear")
+            console.log("Fetching caches…")
             const caches = await github.rest.actions.getActionsCacheList({
               owner: context.repo.owner,
               repo: context.repo.repo,
-            })
+              per_page: 100
+            });
+
+            if (!caches.data.actions_caches.length) {
+              console.log("✅ No cache to clear.");
+              return;
+            }
+
             for (const cache of caches.data.actions_caches) {
-              console.log(cache)
-              github.rest.actions.deleteActionsCacheById({
+              console.log(`🧹 Deleting cache: ${cache.key} (ID: ${cache.id})`);
+              await github.rest.actions.deleteActionsCacheById({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 cache_id: cache.id,
-              })
+              });
             }
-            console.log("Clear completed")
+
+            console.log(`✅ Cleared ${caches.data.actions_caches.length} cache(s).`);
