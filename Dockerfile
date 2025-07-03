@@ -1,9 +1,13 @@
 # ---------- Stage 1 : Go backend ----------
+<<<<<<< HEAD
 FROM --platform=$BUILDPLATFORM golang:1.21-bookworm AS build-go
 
 ARG TARGETOS
 ARG TARGETARCH
 RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build ...
+=======
+FROM --platform=$BUILDPLATFORM golang:1.21-alpine AS build-go
+>>>>>>> 8ef9292 (optimize docker file)
 
 WORKDIR /app
 COPY . .
@@ -14,7 +18,7 @@ RUN apt-get update && apt-get install -y ccache git && \
     GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -o openmower-gui -ldflags="-s -w"
 
 # ---------- Stage 2 : Web frontend with Bun ----------
-FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS build-web
+FROM --platform=$BUILDPLATFORM debian:18-alpine AS build-web
 
 RUN apt-get update && apt-get install -y curl unzip git ca-certificates && \
     rm -rf /var/lib/apt/lists/*
@@ -66,7 +70,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core-inst
 
 
 # ---------- Stage 4 : Final image ----------
-FROM debian:bookworm-slim
+FROM debian:18-alpine
 
 ENV WEB_DIR=/app/web
 ENV DB_PATH=/app/db
