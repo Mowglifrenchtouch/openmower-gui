@@ -7,6 +7,7 @@ IMAGE="ghcr.io/mowglifrenchtouch/openmower-gui"
 TAG_LATEST="latest"
 TAG_DATE="$(date +%Y%m%d-%H%M)"
 TAG_CACHE="buildcache"
+TAG_BUN="bun"
 
 # Répertoire local de cache buildx
 CACHE_DIR=".buildx-cache"
@@ -35,3 +36,4 @@ docker buildx build \
 echo "==> Images poussées :"
 echo "   ${IMAGE}:${TAG_LATEST}"
 echo "   ${IMAGE}:${TAG_DATE}"
+echo "   ${IMAGE}:${TAG_BUN}"

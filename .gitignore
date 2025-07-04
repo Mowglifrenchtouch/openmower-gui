@@ -1,9 +1,16 @@
-# --- Backend Go ---
+# =====================
+# === Backend (Go) ===
+# =====================
 /db
 /openmower-gui
+/openmower-gui/*.out
+/openmower-gui/*.exe
+/openmower-gui/*.test
 *.log
 
-# --- Frontend Web ---
+# ========================
+# === Frontend (Web) ====
+# ========================
 /node_modules/
 package-lock.json
 bun.lockb
@@ -12,8 +19,12 @@ web/node_modules/
 web/.next/
 web/dist/
 web/build/
+web/bun.lockb
+web/.bun/
 
-# --- PlatformIO ---
+# =======================
+# === PlatformIO / MCU ==
+# =======================
 .pio/
 .platformio/
 .vscode/
@@ -21,22 +32,30 @@ web/build/
 *.bin
 *.hex
 
-# --- Docker ---
+# ====================
+# === Docker / CI ====
+# ====================
 .docker/
 .dockerignore
 .buildx-cache/
 *.tar
 *.img
+docker-compose.override.yml
 
-# --- Python ---
+# ==================
+# === Python ==== 
+# ==================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .env
 .venv/
+.env.*
 
-# --- Logs, Dumps, OS ---
+# =========================
+# === Logs / Dumps / OS ===
+# =========================
 *.log
 *.swp
 *.swo
@@ -48,11 +67,21 @@ ehthumbs.db
 *.tmp
 *.old
 
-# --- IDEs ---
+# ==================
+# === Coverage ====
+# ==================
+coverage/
+*.lcov
+
+# ====================
+# === IDEs / Editors ==
+# ====================
 .idea/
 .vscode/
 *.code-workspace
 
-# --- System / Misc ---
+# ==================
+# === Misc System ===
+# ==================
 *.orig
 *~

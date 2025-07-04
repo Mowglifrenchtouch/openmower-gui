@@ -28,8 +28,9 @@ jobs:
             builder: buildjet-4vcpu-ubuntu-2204-arm
           - arch: linux/amd64
             builder: buildjet-4vcpu-ubuntu-2204
-    name: Build - ${{matrix.arch}}
-    runs-on: ${{matrix.builder}}
+
+    name: Build - ${{ matrix.arch }}
+    runs-on: ${{ matrix.builder }}
 
     steps:
       - name: Log into registry ${{ env.REGISTRY }}
@@ -96,6 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
+
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -103,6 +105,15 @@ jobs:
           pattern: digests-*
           merge-multiple: true
           path: /tmp/digests
+
+      - name: Set dynamic tag variables (again)
+        id: vars
+        run: |
+          VERSION="${{ env.VERSION }}"
+          DATE=$(date +%y%m%d)
+          echo "TAG_VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "TAG_DATE=${VERSION}${DATE}" >> $GITHUB_OUTPUT
+          echo "TAG_CUSTOM=bun" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

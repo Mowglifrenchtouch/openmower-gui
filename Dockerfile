@@ -4,55 +4,53 @@ FROM --platform=$BUILDPLATFORM golang:1.21-bookworm AS build-go
 WORKDIR /app
 COPY . .
 
-# Compilation Go (statically linked)
-RUN go build -o openmower-gui -ldflags="-s -w"
+# Compilation Go avec ccache
+RUN apt-get update && apt-get install -y ccache git && \
+    export PATH="/usr/lib/ccache:$PATH" && \
+    go build -o openmower-gui -ldflags="-s -w"
 
 
 # ---------- Stage 2 : Web frontend with Bun ----------
 FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS build-web
 
-# Install dependencies for Bun
-RUN apt-get update && apt-get install -y \
-    curl unzip git ca-certificates && \
+RUN apt-get update && apt-get install -y curl unzip git ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Bun
 RUN curl -fsSL https://bun.sh/install | bash
-
-# Add Bun to PATH
 ENV PATH="/root/.bun/bin:$PATH"
 
 WORKDIR /web
 COPY ./web .
 
-# Build frontend
 RUN bun install && bun run build
 
 
-# ---------- Stage 3 : PlatformIO + OpenOCD + ccache ----------
+# ---------- Stage 3 : PlatformIO + OpenOCD ----------
 FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS deps
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV CCACHE_DIR=/ccache
-ENV CC="ccache gcc"
-ENV CXX="ccache g++"
 
-# Install build dependencies
+# Install build deps + pkg-config
 RUN apt-get update && apt-get install -y \
-    curl python3 python3-pip python3-venv git \
-    build-essential unzip wget autoconf automake pkg-config \
-    texinfo libtool libftdi-dev libusb-1.0-0-dev libjim-dev \
-    ccache \
+    build-essential git python3 python3-pip python3-venv \
+    libusb-1.0-0-dev libftdi-dev texinfo autoconf automake libtool \
+    bash wget ccache curl unzip pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Optional: configure ccache max size
-RUN ccache --max-size=1G
-
 # OpenOCD (raspberrypi fork)
-RUN git clone --depth=1 --branch rpi-common https://github.com/raspberrypi/openocd.git && \
-    cd openocd && ./bootstrap && ./configure \
-        --enable-ftdi --enable-sysfsgpio --enable-bcm2835gpio && \
-    make -j$(nproc) && make install && cd .. && rm -rf openocd
+RUN git clone --recursive --branch rpi-common https://github.com/raspberrypi/openocd.git && \
+    cd openocd && \
+    mkdir -p m4 && \
+    ln -s /usr/share/aclocal/pkg.m4 m4/pkg.m4 && \
+    ./bootstrap && \
+    ./configure \
+        --enable-ftdi \
+        --enable-sysfsgpio \
+        --enable-bcm2835gpio \
+        --enable-internal-jimtcl && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && rm -rf openocd
 
 # PlatformIO
 RUN curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py -o get-platformio.py && \
@@ -71,12 +69,10 @@ ENV WEB_DIR=/app/web
 ENV DB_PATH=/app/db
 WORKDIR /app
 
-# Runtime dependencies
 RUN apt-get update && apt-get install -y \
-    ca-certificates python3 python3-pip libusb-1.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+    ca-certificates python3 python3-pip libusb-1.0-0 ccache && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy built binaries and assets
 COPY --from=deps /usr/local /usr/local
 COPY --from=build-web /web/dist ./web
 COPY --from=build-go /app/openmower-gui ./openmower-gui
