@@ -1,14 +1,16 @@
 # ---------- Stage 1 : Go backend ----------
 FROM --platform=$BUILDPLATFORM golang:1.21-bookworm AS build-go
 
+ARG TARGETOS
+ARG TARGETARCH
+
 WORKDIR /app
 COPY . .
 
-# Compilation Go avec ccache
+# Compilation Go avec ccache et cross-compilation
 RUN apt-get update && apt-get install -y ccache git && \
     export PATH="/usr/lib/ccache:$PATH" && \
-    go build -o openmower-gui -ldflags="-s -w"
-
+    GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -o openmower-gui -ldflags="-s -w"
 
 # ---------- Stage 2 : Web frontend with Bun ----------
 FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS build-web
