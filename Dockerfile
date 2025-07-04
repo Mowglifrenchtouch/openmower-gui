@@ -3,6 +3,7 @@ FROM --platform=$BUILDPLATFORM golang:1.21-bookworm AS build-go
 
 ARG TARGETOS
 ARG TARGETARCH
+GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build ...
 
 WORKDIR /app
 COPY . .
