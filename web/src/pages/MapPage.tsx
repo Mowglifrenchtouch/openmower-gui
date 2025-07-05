@@ -1011,8 +1011,8 @@ export const MapPage = () => {
                 Command: 3,
             }
         )()
-        setManualMode(setInterval(() => {
-            (async () => {
+        setManualMode(window.setInterval(() => {
+  (async () => {
                 await mowerAction("mow_enabled", {MowEnabled: 1, MowDirection: 0})()
             })()
         }, 10000))
