@@ -1,9 +1,13 @@
 {
-  "name": "OpenMower GUI",
+  "name": "OpenMower GUI DevContainer",
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "forwardPorts": [5173, 1883, 4006],
+  "forwardPorts": [
+    5173,
+    1883,
+    4006
+  ],
   "remoteUser": "node",
   "customizations": {
     "jetbrains": {
@@ -14,7 +18,8 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "bradlc.vscode-tailwindcss",
-        "yoavbls.pretty-ts-errors"
+        "yoavbls.pretty-ts-errors",
+        "golang.Go"
       ]
     }
   },

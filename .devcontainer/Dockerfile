@@ -1,7 +1,11 @@
+# ---------- Base Node ----------
 FROM node:18
 
-# Install basic tools
-RUN apt update && apt install -y less man-db sudo wget
+# ---------- Root setup ----------
+# Install essential tools
+RUN apt update && apt install -y \
+    less man-db sudo wget curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Go
 RUN wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz && \
@@ -9,24 +13,19 @@ RUN wget https://go.dev/dl/go1.22.4.linux-amd64.tar.gz && \
     tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz && \
     rm -f go1.22.4.linux-amd64.tar.gz
 
-# Ensure default `node` user has sudo access
+# Give sudo to default `node` user
 ARG USERNAME=node
-RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN echo "$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Switch to user `node` to install Bun in /home/node/.bun
+# ---------- Switch to node and install Bun ----------
 USER node
 RUN curl -fsSL https://bun.sh/install | bash
 
-# Bun path
+# ---------- Environment paths ----------
 ENV BUN_INSTALL=/home/node/.bun
-ENV PATH="${BUN_INSTALL}/bin:${PATH}"
-
-# Go path
-ENV PATH=$PATH:/usr/local/go/bin
-
-# Restore root to allow devcontainer commands
-USER root
-
-# Mark this as a devcontainer
+ENV PATH="${BUN_INSTALL}/bin:/usr/local/go/bin:${PATH}"
 ENV DEVCONTAINER=true
+
+# ---------- Back to root for devcontainer usage ----------
+USER root

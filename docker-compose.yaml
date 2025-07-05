@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   watchtower:
@@ -6,6 +6,10 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_CLEANUP: 'true'
+      WATCHTOWER_POLL_INTERVAL: 86400
+      WATCHTOWER_LABEL_ENABLE: 'true'
 
   gui:
     container_name: openmower-gui
@@ -23,8 +27,11 @@ services:
       DOCKER_HOST: unix:///var/run/docker.sock
       CCACHE_DIR: /ccache
     volumes:
-      - /dev:/dev                       # nécessaire pour accès USB
-      - ./db:/app/db                   # base de données locale
-      - ./config/om:/config            # config OpenMower
+      - /dev:/dev                         # accès aux périphériques
+      - ./db:/app/db                      # base de données locale
+      - ./config/om:/config               # config mower
       - /var/run/docker.sock:/var/run/docker.sock
-      - openmower-ccache:/ccache       # volume pour cache PlatformIO
+      - openmower-ccache:/ccache          # cache ccache/PlatformIO
+
+volumes:
+  openmower-ccache:
