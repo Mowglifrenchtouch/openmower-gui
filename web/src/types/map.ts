@@ -123,10 +123,7 @@ export class MowingFeatureBase extends MowingFeature implements Feature<Polygon>
     }
 
 
-<<<<<<< HEAD
-=======
     
->>>>>>> 2eedb60 (Fix geojson import / export)
     setColor(color: string) : MowingFeatureBase {
         this.properties.color = color;
         return this;
